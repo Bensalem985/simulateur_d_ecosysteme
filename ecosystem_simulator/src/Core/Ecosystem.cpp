@@ -4,22 +4,25 @@
 
 namespace Ecosystem {
     namespace Core {
-        
+
         // 🏗 CONSTRUCTEUR
-        Ecosystem::Ecosystem(float width, float height, int maxEntities) : mWorldWidth(width), mWorldHeight(height), mMaxEntities(maxEntities),mDayCycle(0), mRandomGenerator(std::random_device{}())
+        Ecosystem::Ecosystem(float width, float height, int maxEntities)
+            : mWorldWidth(width), mWorldHeight(height), mMaxEntities(maxEntities),
+            mDayCycle(0), mRandomGenerator(std::random_device{}())
         {
             // Initialisation des statistiques
             mStats = {0, 0, 0, 0, 0, 0};
-            std::cout << "Ecosysteme cree: " << width << "x" << height << std::endl;
+            std::cout << "🌍Écosystème créé: " << width << "x" << height << std::endl;
         }
 
         // 🗑 DESTRUCTEUR
         Ecosystem::~Ecosystem() {
-            std::cout << "Ecosysteme detruit (" << mEntities.size() << " entites nettoyes" << std::endl;
+            std::cout << "🌍Écosystème détruit (" << mEntities.size() << " entités nettoyé)"<< std::endl;
         }
-        
+
         // INITIALISATION
-        void Ecosystem::Initialize(int initialHerbivores, int initialCarnivores, int initialPlants) {
+        void Ecosystem::Initialize(int initialHerbivores, int initialCarnivores, int initialPlants)
+        {
             mEntities.clear();
             mFoodSources.clear();
 
@@ -38,8 +41,7 @@ namespace Ecosystem {
 
             // Nourriture initiale
             SpawnFood(20);
-
-            std::cout << "Ecosysteme initialise avec " << mEntities.size() << " entites" << std::endl;
+            std::cout << "🌱Écosystème initialisé avec " << mEntities.size() << " entités"<< std::endl;
         }
 
         // MISE À JOUR
@@ -59,7 +61,7 @@ namespace Ecosystem {
             UpdateStatistics();
             mDayCycle++;
         }
-        
+
         // GÉNÉRATION DE NOURRITURE
         void Ecosystem::SpawnFood(int count) {
             for (int i = 0; i < count; ++i) {
@@ -75,12 +77,11 @@ namespace Ecosystem {
             int initialCount = mEntities.size();
             mEntities.erase(
                 std::remove_if(mEntities.begin(), mEntities.end(),
-                    [](const std::unique_ptr<Entity>& entity) {
-                        return !entity->IsAlive();
+                    [](const std::unique_ptr<Entity>& entity) { 
+                        return !entity->IsAlive(); 
                     }),
                 mEntities.end()
             );
-
             int removedCount = initialCount - mEntities.size();
             if (removedCount > 0) {
                 mStats.deathsToday += removedCount;
@@ -90,21 +91,20 @@ namespace Ecosystem {
         // GESTION DE LA REPRODUCTION
         void Ecosystem::HandleReproduction() {
             std::vector<std::unique_ptr<Entity>> newEntities;
-
             for (auto& entity : mEntities) {
                 if (entity->CanReproduce() && mEntities.size() < mMaxEntities) {
                     auto baby = entity->Reproduce();
                     if (baby) {
                         newEntities.push_back(std::move(baby));
                         mStats.birthsToday++;
+                        // Ajout des nouveaux entités
+                        for (auto& newEntity : newEntities) {
+                            mEntities.push_back(std::move(newEntity));
+                        }
                     }
                 }
             }
-
-            // Ajout des nouveaux entités
-            for (auto& newEntity : newEntities) {
-                mEntities.push_back(std::move(newEntity));
-            }
+                    
         }
 
         // 🍽 GESTION DE L'ALIMENTATION
@@ -125,7 +125,6 @@ namespace Ecosystem {
             mStats.totalCarnivores = 0;
             mStats.totalPlants = 0;
             mStats.totalFood = mFoodSources.size();
-
             for (const auto& entity : mEntities) {
                 switch (entity->GetType()) {
                     case EntityType::HERBIVORE:
@@ -161,7 +160,7 @@ namespace Ecosystem {
         }
 
         // POSITION ALÉATOIRE
-    Vector2D Ecosystem::GetRandomPosition() const {
+        Vector2D Ecosystem::GetRandomPosition() const { 
             std::uniform_real_distribution<float> distX(0.0f, mWorldWidth);
             std::uniform_real_distribution<float> distY(0.0f, mWorldHeight);
             return Vector2D(distX(mRandomGenerator), distY(mRandomGenerator));
@@ -195,6 +194,5 @@ namespace Ecosystem {
                 entity->Render(renderer);
             }
         }
-
-    } // namespace Core 
+    } // namespace Core
 } // namespace Ecosystem

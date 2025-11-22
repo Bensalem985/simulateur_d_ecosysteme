@@ -10,7 +10,7 @@ namespace Ecosystem {
     namespace Core {
 
         class Ecosystem {
-        private:
+            private:
             // ÉTAT INTERNE
             std::vector<std::unique_ptr<Entity>> mEntities;
             std::vector<Food> mFoodSources;
@@ -32,20 +32,20 @@ namespace Ecosystem {
                 int birthsToday;
             } mStats;
 
-        public:
-            // CONSTRUCTEUR/DESTRUCTEUR
+            public:
+            //  CONSTRUCTEUR/DESTRUCTEUR 
             Ecosystem(float width, float height, int maxEntities = 500);
             ~Ecosystem();
 
             // MÉTHODES PUBLIQUES
-            void Initialize(int initialHerbivores, int initialCarnivores, int initialPlants)
+            void Initialize(int initialHerbivores, int initialCarnivores, int initialPlants);
             void Update(float deltaTime);
             void SpawnFood(int count);
             void RemoveDeadEntities();
             void HandleReproduction();
             void HandleEating();
 
-            //GETTERS
+            // GETTERS
             int GetEntityCount() const { return mEntities.size(); }
             int GetFoodCount() const { return mFoodSources.size(); }
             Statistics GetStatistics() const { return mStats; }
@@ -59,13 +59,12 @@ namespace Ecosystem {
             // RENDU
             void Render(SDL_Renderer* renderer) const;
 
-        private:
-            // MÉTHODES PRIVÉES
+            private:
+            //MÉTHODES PRIVÉES
             void UpdateStatistics();
             void SpawnRandomEntity(EntityType type);
             Vector2D GetRandomPosition() const;
             void HandlePlantGrowth(float deltaTime);
         };
-
     } // namespace Core
 } // namespace Ecosystem
