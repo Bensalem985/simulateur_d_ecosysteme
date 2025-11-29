@@ -69,12 +69,38 @@ namespace Ecosystem {
         // ⚙️ MISE À JOUR PRINCIPALE
         void Entity::Update(float deltaTime) {
             if (!mIsAlive) return;
+
+            // MODIFICATION DE LA METHODE POUR PRENDRE EN COMPTE L'ACCELERATION
+            // La vitesse change selon l'accélération
+            mVelocity.x += mAcceleration.x * deltaTime;
+            mVelocity.y += mAcceleration.y * deltaTime;
+
+            // La position change selon la vitesse
+            mPosition.x += mVelocity.x * deltaTime;
+            mPosition.y += mVelocity.y * deltaTime;
+
+            // Reset de l'accélération après chaque frame
+            mAcceleration.x = 0.0f;
+            mAcceleration.y = 0.0f;
             
             // 🔄 PROCESSUS DE VIE
             ConsumeEnergy(deltaTime);
             Age(deltaTime);
             Move(deltaTime);
             CheckVitality();
+
+            mAge += deltaTime; // Incrémente l'âge en fonction du temps écoulé
+            mEnergy -= 5.0f * deltaTime; // Consomme de l'énergie de base
+
+            // L'entité meurt s'il dépasse l'age max ou s'il n'a plus d'énergie
+            if (mEnergy < 0.0f || mAge >= mMaxAge) {
+                mIsAlive = false;
+                std::cout << "💀 " << name << " meurt - ";
+                if (mEnergy <= 0) std::cout << "Faim";
+                else std::cout << "Vieillesse";
+                std::cout << std::endl;
+            }
+
         }
 
         // 🚶 MOUVEMENT
@@ -160,6 +186,17 @@ namespace Ecosystem {
         Vector2D Entity::GenerateRandomDirection() {
             std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
             return Vector2D(dist(mRandomGenerator), dist(mRandomGenerator));
+        }
+
+        // Implémentation de la méthode ApplyForce
+        void Entity::ApplyForce(Vector2D force) {
+            if (mMass > 0) { // Si l'entité a une masse pour eviter la division par zéro
+            mAcceleration.x += force.x / mMass;
+            mAcceleration.y += force.y / mMass;
+            } else {
+                mAcceleration.x += force.x;
+                mAcceleration.y += force.y;   
+            }
         }
 
         // 🎨 CALCUL DE LA COULEUR BASÉE SUR L'ÉTAT

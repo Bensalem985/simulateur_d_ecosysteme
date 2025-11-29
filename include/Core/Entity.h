@@ -25,6 +25,9 @@ namespace Ecosystem {
             int mMaxAge;
             bool mIsAlive;
             Vector2D mVelocity;
+            Vector2D mPosition;
+            Vector2D mAcceleration;
+            float mMass;
             EntityType mType;
             
             // 🎲 Générateur aléatoire

@@ -1,12 +1,14 @@
-#include <windows.h>
+#include <windows.h> // Pour SetConsoleOutputCP
 #include "Core/GameEngine.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 
 int main(int argc, char* argv[]) {
+
+    // 🌐 Configuration de la console pour UTF-8
     SetConsoleOutputCP(65001);
-    
+
     // 🎲 Initialisation de l'aléatoire
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     
@@ -22,13 +24,13 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     
-    std::cout << "Moteur initialise avec succes" << std::endl;
+    std::cout << "Moteur initialisé avec succès" << std::endl;
     std::cout << "Lancement de la simulation..." << std::endl;
-    std::cout << "=== CONTROLES ===" << std::endl;
+    std::cout << "=== CONTRÔLES ===" << std::endl;
     std::cout << "ESPACE: Pause/Reprise" << std::endl;
     std::cout << "R: Reset simulation" << std::endl;
     std::cout << "F: Ajouter nourriture" << std::endl;
-    std::cout << "FLECHES: Vitesse simulation" << std::endl;
+    std::cout << "FLÊCHES: Vitesse simulation" << std::endl;
     std::cout << "ECHAP: Quitter" << std::endl;
     
     // 🎮 Boucle principale
@@ -37,6 +39,10 @@ int main(int argc, char* argv[]) {
     // 🛑 Arrêt propre
     engine.Shutdown();
     
-    std::cout << "Simulation terminee. Appuyez sur entree pour fermer..." << std::endl;
+    // 👋 Attente avant fermeture
+    std::cout << "Simulation terminée. Appuyez sur entrée pour fermer..." << std::endl;
+    std::cin.ignore();
+    std::cin.get();
+
     return 0;
 }

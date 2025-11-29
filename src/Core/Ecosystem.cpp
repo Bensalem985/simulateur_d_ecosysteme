@@ -44,10 +44,25 @@ namespace Ecosystem {
             std::cout << "🌱 Écosystème initialisé avec " << mEntities.size() << " entités" << std::endl;
         }
 
-        // 🔄 MISE À JOUR
+        // 🔄 MISE À JOUR: Ajout de la méthode ApplyForce
         void Ecosystem::Update(float deltaTime) {
+
+            // On prépare un générateur pour une force aléatoire (entre -10 et 10)
+            std::uniform_real_distribution<float> randomForceDist(-10.0f, 10.0f);
+
             // Mise à jour de toutes les entités
             for (auto& entity : mEntities) {
+                if (!entity -> IsAlive()) continue;
+
+                // On crée un vecteur force simple (x, y)
+                Vector2D force = {
+                    randomForceDist(mRandomGenerator),
+                    randomForceDist(mRandomGenerator)
+                };
+
+                // On applique cette force à l'entité
+                entity->ApplyForce(force);
+
                 entity->Update(deltaTime);
             }
             
