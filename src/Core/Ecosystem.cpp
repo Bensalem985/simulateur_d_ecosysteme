@@ -141,11 +141,34 @@ namespace Ecosystem {
         // 🍽 GESTION DE L'ALIMENTATION
         void Ecosystem::HandleEating() {
             // Ici on implémenterait la logique de recherche de nourriture
-            // Pour l'instant, gestion simplifiée
+            
+            // Recherche de nourriture pour chaque entité
+            for (auto& entity : mEntities) {
+                if (!entity->IsAlive()) continue;
+
+                Vector2D steer = entity->SeekFood(mFoodSources);
+                entity->ApplyForce(steer);
+            }
+
+            // Gestion de la consommation de nourriture
             for (auto& entity : mEntities) {
                 if (entity->GetType() == EntityType::PLANT) {
                     // Les plantes génèrent de l'énergie
                     entity->Eat(0.1f);
+                    continue;
+                }
+
+                // Vérification de la proximité de la nourriture
+                for (auto it = mFoodSources.begin(); it != mFoodSources.end(); ) {
+                    float distance = entity->position.Distance(it->position);
+                    if (distance < entity->size) {
+                        // L'entité mange la nourriture
+                        entity->Eat(it->energyValue);
+                        // Retirer la nourriture consommée
+                        it = mFoodSources.erase(it);
+                    } else {
+                        ++it;
+                    }
                 }
             }
         }

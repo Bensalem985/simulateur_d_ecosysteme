@@ -10,6 +10,7 @@ namespace Ecosystem {
         Entity::Entity(EntityType type, Vector2D pos, std::string entityName)
             : mType(type), position(pos), name(entityName), 
             mRandomGenerator(std::random_device{}())  // Initialisation du générateur aléatoire
+                , mMaxSpeed(5.0f)  // Initialisation de la vitesse maximale
         {
             // 🔧 INITIALISATION SELON LE TYPE
             switch(mType) {
@@ -46,6 +47,13 @@ namespace Ecosystem {
         }
 
         // 🏗 CONSTRUCTEUR DE COPIE
+                // Capper la vitesse pour éviter des déplacements trop rapides
+                float vlen = std::sqrt(mVelocity.x*mVelocity.x + mVelocity.y*mVelocity.y);
+                if (vlen > mMaxSpeed && vlen > 0.0f) {
+                    float scale = mMaxSpeed / vlen;
+                    mVelocity.x *= scale;
+                    mVelocity.y *= scale;
+                }
         Entity::Entity(const Entity& other)
             : mType(other.mType), position(other.position), name(other.name + "_copy"),
             mEnergy(other.mEnergy * 0.7f),  // Enfant a moins d'énergie
@@ -113,8 +121,8 @@ namespace Ecosystem {
                 mVelocity = GenerateRandomDirection();
             }
             
-            // 📐 Application du mouvement
-            position = position + mVelocity * deltaTime * 20.0f;
+                // 📐 Application du mouvement
+                position = position + mVelocity * deltaTime * 10.0f; // réduit la vitesse de translation
             
             // 🔄 Consommation d'énergie due au mouvement
             mEnergy -= mVelocity.Distance(Vector2D(0, 0)) * deltaTime * 0.1f;
