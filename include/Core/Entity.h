@@ -65,7 +65,7 @@ namespace Ecosystem {
             
             // 🎯 MÉTHODES DE COMPORTEMENT
             Vector2D SeekFood(const std::vector<Food>& foodSources) const;
-            Vector2D AvoidPredators(const std::vector<Entity>& predators) const;
+            Vector2D AvoidPredators(const std::vector<std::unique_ptr<Entity>>& entities) const;
             Vector2D StayInBounds(float worldWidth, float worldHeight) const;
             
             // 🎨 MÉTHODE DE RENDU

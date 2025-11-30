@@ -44,7 +44,7 @@ namespace Ecosystem {
             std::cout << "🌱 Écosystème initialisé avec " << mEntities.size() << " entités" << std::endl;
         }
 
-        // 🔄 MISE À JOUR: Ajout de la méthode ApplyForce
+        // 🔄 MISE À JOUR
         void Ecosystem::Update(float deltaTime) {
 
             // On prépare un générateur pour une force aléatoire (entre -10 et 10)
@@ -65,6 +65,12 @@ namespace Ecosystem {
 
                 entity->Update(deltaTime);
             }
+
+            // Maintenir les entités dans les limites du monde
+            for (auto& entity : mEntities) {
+                Vector2D boundaryForce = entity->StayInBounds(mWorldWidth, mWorldHeight);
+                entity->ApplyForce(boundaryForce);
+            }
             
             // Gestion des comportements
             HandleEating();
@@ -84,6 +90,13 @@ namespace Ecosystem {
                     Vector2D position = GetRandomPosition();
                     mFoodSources.emplace_back(position, 25.0f);
                 }
+            }
+        }
+
+        // 🍎 AJOUT DE NOURRITURE À UNE POSITION SPÉCIFIQUE
+        void Ecosystem::AddFood(Vector2D position, float energy) {
+            if (mFoodSources.size() < 100) {  // Limite maximale de nourriture
+                mFoodSources.emplace_back(position, energy);
             }
         }
 

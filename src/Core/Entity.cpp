@@ -245,5 +245,70 @@ namespace Ecosystem {
             }
         }
 
+        // Implémentation de la méthode SeekFood
+        Vector2D Entity::SeekFood(const std::vector<Food>& foodSources) const {
+            float perceptionRadius = 100.0f;
+            Vector2D steer = {0, 0};
+            int count = 0;
+
+            for (const auto& food : foodSources) {
+                float d = position.Distance(food.position);
+                
+                if (d > 0 && d < perceptionRadius) {
+                    // Vecteur désiré : LUI moins MOI
+                    Vector2D desired = { food.position.x - position.x, food.position.y - position.y };
+                    
+                    // Normaliser et pondérer par la distance (plus il est près, plus je veux y aller)
+                    float len = std::sqrt(desired.x*desired.x + desired.y*desired.y);
+                    desired.x /= len;
+                    desired.y /= len;
+                    
+                    // Diviser par d (plus d est petit, plus le vecteur est grand)
+                    steer.x += desired.x / d;
+                    steer.y += desired.y / d;
+                    count++;
+                }
+            }
+
+            if (count > 0) {
+                // Moyenne des vecteurs désirés
+                steer.x /= count;
+                steer.y /= count;
+
+                // Mettre à vitesse max
+                float len = std::sqrt(steer.x*steer.x + steer.y*steer.y);
+                if (len > 0) {
+                    steer.x = (steer.x / len) * 50.0f;
+                    steer.y = (steer.y / len) * 50.0f;
+                    
+                    // Steering = Desired - Velocity
+                    steer.x -= mVelocity.x;
+                    steer.y -= mVelocity.y;
+                }
+            }
+
+            return steer;
+        }
+
+        // Implémentation de la méthode StayInBounds
+        Vector2D Entity::StayInBounds(float worldWidth, float worldHeight) const {
+            Vector2D steer = {0, 0};
+            float margin = 50.0f; // Distance du bord pour commencer à corriger
+
+            if (position.x < margin) {
+                steer.x = 50.0f; // Pousser vers la droite
+            } else if (position.x > worldWidth - margin) {
+                steer.x = -50.0f; // Pousser vers la gauche
+            }
+
+            if (position.y < margin) {
+                steer.y = 50.0f; // Pousser vers le bas
+            } else if (position.y > worldHeight - margin) {
+                steer.y = -50.0f; // Pousser vers le haut
+            }
+
+            return steer;
+        }
+
     } // namespace Core
 } // namespace Ecosystem
